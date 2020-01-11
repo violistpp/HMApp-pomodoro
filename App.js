@@ -12,18 +12,22 @@ import HomeScreen from "./src/screens/HomeScreen";
 import ProfileScreen from "./src/screens/ProfileScreen"
 import PomodoroScreen from "./src/screens/PomodoroScreen"
 
-import * as firebase from "firebase";
+// import * as firebase from "firebase";
+// import FirebaseKeys from "./config";
 
-var firebaseConfig = {
-  apiKey: "AIzaSyB3JwF-hphUMz3yl_mCFR1ugJIHKsWPxwo",
-  authDomain: "todo-f09ed.firebaseapp.com",
-  databaseURL: "https://todo-f09ed.firebaseio.com",
-  projectId: "todo-f09ed",
-  storageBucket: "todo-f09ed.appspot.com",
-  messagingSenderId: "154168512624",
-  appId: "1:154168512624:web:5332b79efa2117512a64b5"
-};
-firebase.initializeApp(firebaseConfig);
+// var firebaseConfig = {
+//   apiKey: "AIzaSyB3JwF-hphUMz3yl_mCFR1ugJIHKsWPxwo",
+//   authDomain: "todo-f09ed.firebaseapp.com",
+//   databaseURL: "https://todo-f09ed.firebaseio.com",
+//   projectId: "todo-f09ed",
+//   storageBucket: "todo-f09ed.appspot.com",
+//   messagingSenderId: "154168512624",
+//   appId: "1:154168512624:web:5332b79efa2117512a64b5"
+// };
+
+//var firebaseConfig = FirebaseKeys;
+
+//firebase.initializeApp(firebaseConfig);
 
 const AppTabNavigator = createBottomTabNavigator(
     {

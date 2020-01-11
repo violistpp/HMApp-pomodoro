@@ -5,8 +5,6 @@ import Menu from '../components/menu';
 import Buttons from '../components/button';
 import Timer from '../components/timer';
 import Label from '../components/label';
-import Info from '../components/info';
-import Picture from '../components/picture';
 import vibrate from '../../vibrate';
 
 function leftPadding(n) {
