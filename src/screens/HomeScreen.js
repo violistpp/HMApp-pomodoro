@@ -1,70 +1,69 @@
 import React, { Component } from 'react'
-import { View, Text, StyleSheet, TouchableOpacity, TextInput, FlatList } from 'react-native'
-import { CheckBox } from 'react-native-elements'
+import { 
+    View, 
+    Text, 
+    StyleSheet, 
+    TouchableOpacity, 
+    TextInput, 
+    FlatList,
+    ListView
+} from 'react-native'
 import Icon from 'react-native-vector-icons/Ionicons'
-import moment from "moment";
-import Fire from '../../Fire'
+import IconTwo from 'react-native-vector-icons/Feather'
+import moment from "moment"
+import * as firebase from 'firebase'
 
-const firebase = require('firebase')
-require("firebase/firestore")
+// import FirebaseKeys from '../../config'
 
-posts = [
-    {
-        id: "1",
-        name: "Joe McKay",
-        text:
-            "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.",
-        timestamp: 1569109273726,
-    },
-    {
-        id: "2",
-        name: "Karyn Kim",
-        text:
-            "Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.",
-        timestamp: 1569109273726,
-    },
-    {
-        id: "3",
-        name: "Emerson Parsons",
-        text:
-            "Amet mattis vulputate enim nulla aliquet porttitor lacus luctus. Vel elit scelerisque mauris pellentesque pulvinar pellentesque habitant.",
-        timestamp: 1569109273726,
-    },
-    {
-        id: "4",
-        name: "Kathie Malone",
-        text:
-            "At varius vel pharetra vel turpis nunc eget lorem. Lorem mollis aliquam ut porttitor leo a diam sollicitudin tempor. Adipiscing tristique risus nec feugiat in fermentum.",
-        timestamp: 1569109273726,
-    }
-];
+// firebase.initializeApp(FirebaseKeys);
+
+// {
+    //     task: "task One"
+    // }, 
+    // {
+    //     task: "task Two"
+    // }
+var data = []
 
 export default class HomeScreen extends Component {
 
-    state = {
-        text: ""
+    constructor(props) {
+        super(props);
+        
+        this.state = {
+            listData: data,
+            newTask: ""
+        }
     }
 
-    handleTask = () => {
-        Fire.shared.addPost({text: this.state.text.trim()})
-        .then(ref => {
-            this.setState({text: ""});
-        })
-        .catch(error => {
-            alert(error);
+    componentDidMount() {
+        var that = this
+        firebase.database().ref('/tasts').on('child_added', function(data) {
+            var newData = [...that.state.listData]
+            newData.push(data)
+            that.setState({listData: newData})
         })
     }
 
-    renderTask = post => {
-        const { taskStyle, titleStyle, timestamp } = styles
+    addTask(data) {
+        var key = firebase.database().ref('/tasks').push().key
+        firebase.database().ref('/tasks').child(key).set({ task: data, checked: false })
+    }
+
+    showInformation() {
+
+    }
+
+    renderTask({item}) {
+        const { taskStyle, titleStyle, timestamp, checkStyle } = styles
         return (
             <View style={taskStyle}>
-                <CheckBox />
+                <IconTwo name='circle' style={checkStyle} />
                 <View style={{ flex: 1 }}>
                     <View style={{ flexDirection: "row", justifyContent: "space-between", alignItems: "center" }}>
                         <View>
-                            <Text style={titleStyle}>{post.name}</Text>
-                            <Text style={timestamp}>{moment(post.timestamp).fromNow()}</Text>
+                            <Text style={titleStyle}>{item.task}</Text>
+                            {/* <Text style={timestamp}>{moment(post.timestamp).fromNow()}</Text> */}
                         </View>
                     </View>
                 </View>
@@ -73,33 +72,32 @@ export default class HomeScreen extends Component {
     };
 
     render() {
-        const { container, inputText, newTask, addButton } = styles
+        const { container, inputText, newTaskStyle, addButton } = styles
 
         return (
             <View style={container}>
 
                 <FlatList
                     style={{ marginHorizontal: 16 }}
-                    data={posts}
-                    renderItem={({ item }) => this.renderTask(item)}
-                    keyExtractor={item => item.id}
-                    showsVerticalScrollIndicator={false}
+                    data={this.state.listData}
+                    renderItem={this.renderTask}
+                    keyExtractor={item => item.task}
                 ></FlatList>
 
-                <View style={ newTask }>
+                <View style={newTaskStyle}>
                     <TextInput
-                        onChangeText={(text) => this.setState({ text })}
+                        onChangeText={(newTask) => this.setState({ newTask })}
                         value={this.state.text}
                         placeholder="new task"
                         style={inputText}
                     />
 
-                    <TouchableOpacity style={addButton}>
+                    <TouchableOpacity style={addButton} onPress={() => {this.addTask(this.state.newTask)}}>
                         {/* <Text>md-add-circle-outline, md-add-circle, md-arrow-up, md-checkbox</Text> */}
                         <Icon name="md-arrow-dropup-circle" size={32} color="#D8D9DB"></Icon>
                     </TouchableOpacity>
                 </View>
-                
+
             </View>
         );
     }
@@ -127,7 +125,12 @@ const styles = StyleSheet.create({
         color: "#C4C6CE",
         marginTop: 4
     },
-    newTask: {
+    checkStyle: {
+        marginRight: 10,
+        marginTop: 12,
+        marginLeft: 4
+    },
+    newTaskStyle: {
         flexDirection: "row",
         alignItems: "flex-end",
         paddingHorizontal: 10,

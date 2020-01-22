@@ -1,11 +1,17 @@
 import React, { Component} from 'react'
 import { View, Text, StyleSheet, ActivityIndicator } from 'react-native'
+import FirebaseKeys from '../../config';
 import * as firebase from 'firebase'
+
+// const firebaseAuth = firebase.auth();
+
+const firebaseApp = firebase.initializeApp(FirebaseKeys);
+const firebaseAuth = firebaseApp.auth();
 
 export default class LoadingScreen extends Component {
 
     componentDidMount() {
-        firebase.auth().onAuthStateChanged(user => {
+        firebaseAuth.onAuthStateChanged(user => {
             this.props.navigation.navigate(user ? "App" : "Auth");
         });
     }

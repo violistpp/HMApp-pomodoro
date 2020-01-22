@@ -1,40 +1,29 @@
-import FirebaseKeys from "./config";
-import firebase from 'firebase'
+import firebase from 'react-native-firebase'
 
-class Fire {
-    constructor() {
-        firebase.initializeApp(FirebaseKeys);
-    }
-
-    addTask = async ({text}) => {
-        return new Promise((res, rej) => {
-            this.firesore
-            .collection("tasks")
-            .add({
-                text,
-                uid: this.uid,
-                timestamp: this.timestamp
-            })
-            .then(ref => {
-                res(ref);
-            }).catch(error => {
-                rej(error)
-            })
-        })
-    }
-
-    get firesore() {
-        return firebase.firestore()
-    }
-
-    get uid() {
-        return (firebase.auth().currentUser || {}).uid
-    }
-
-    get timestamp() {
-        return DataCue.now()
-    }
+export function addTask(task, addComplete) {
+    firebase.firestore()
+    .collection('Tasks')
+    .add({
+        name: task.name,
+        checked: task.checked,
+        createdAt: firebase.firestore.FieldValue.serverTimestamp()
+    }).then((snapshot) => snapshot.get())
+    .then((taskData) => addComponent(taskData.data()))
+    .catch((error) => console.log(error));
 }
 
-Fire.shared = new Fire();
-export default Fire;
+export async function getTasks(tasksRetreived) {
+    
+    var taskList = [];
+
+    var snapshot = await firebase.firestore()
+    .collection('Tasks')
+    .orderBy('createdAt')
+    .get()
+
+    snapshot.forEach((doc) => {
+        taskList.push(doc.data())
+    });
+
+    tasksRetreived(taskList);
+}
