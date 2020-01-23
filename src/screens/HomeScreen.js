@@ -23,7 +23,16 @@ import * as firebase from 'firebase'
     // {
     //     task: "task Two"
     // }
-var data = []
+var data = [
+    // {
+    //     task: 'New Task',
+    //     checked: false
+    // },
+    // {
+    //     task: 'Do',
+    //     chacked: false
+    // }
+]
 
 export default class HomeScreen extends Component {
 
@@ -38,10 +47,11 @@ export default class HomeScreen extends Component {
 
     componentDidMount() {
         var that = this
-        firebase.database().ref('/tasts').on('child_added', function(data) {
+        firebase.database().ref('/tasks').on('child_added', function(data) {
             var newData = [...that.state.listData]
-            newData.push(data)
+            newData.push(data.val())
             that.setState({listData: newData})
+            console.log("new data: ", newData)
         })
     }
 
@@ -68,6 +78,7 @@ export default class HomeScreen extends Component {
                     </View>
                 </View>
             </View>
+            // <Text style={titleStyle}>{item.task}</Text>
         );
     };
 
@@ -81,7 +92,7 @@ export default class HomeScreen extends Component {
                     style={{ marginHorizontal: 16 }}
                     data={this.state.listData}
                     renderItem={this.renderTask}
-                    keyExtractor={item => item.task}
+                    keyExtractor={item => item.key}
                 ></FlatList>
 
                 <View style={newTaskStyle}>
@@ -127,7 +138,7 @@ const styles = StyleSheet.create({
     },
     checkStyle: {
         marginRight: 10,
-        marginTop: 12,
+        marginTop: 5,
         marginLeft: 4
     },
     newTaskStyle: {
