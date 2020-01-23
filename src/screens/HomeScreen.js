@@ -6,12 +6,15 @@ import {
     TouchableOpacity, 
     TextInput, 
     FlatList,
-    ListView
+    ListView,
+    Alert
 } from 'react-native'
 import Icon from 'react-native-vector-icons/Ionicons'
 import IconTwo from 'react-native-vector-icons/Feather'
 import moment from "moment"
 import * as firebase from 'firebase'
+window.navigator.userAgent = 'react-native';
+import io from 'socket.io-client/dist/socket.io';
 
 // import FirebaseKeys from '../../config'
 
@@ -38,6 +41,10 @@ export default class HomeScreen extends Component {
 
     constructor(props) {
         super(props);
+
+        this.socket = io('localhost:3000', {jsonp: false});
+
+        this.socket.on('update', ()=> {Alert.alert('You need to...')});
         
         this.state = {
             listData: data,
